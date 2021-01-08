@@ -290,18 +290,23 @@ app.put("/enroll-request/:status", (req, res, next) => {
     registration_number : req.body.registration_number,
   };
 
+  var student_id = "";
+
   if(req.params.status == "approve"){
     status = "approved";
+    student_id = data.registration_number + data.course_code;
   }
   else{
     status = "pending";
+    student_id = "";
   }
 
   var sql = `UPDATE enrollRequest
-            SET status = ? student_id = 
+            SET status = ?, student_id = ?
             WHERE registration_number = ? AND course_code = ?`;
   var params = [
     status,
+    student_id,
     data.registration_number,
     data.course_code,
   ];
@@ -312,6 +317,12 @@ app.put("/enroll-request/:status", (req, res, next) => {
       res.json({ error: err.message });
       return;
     }
+
+    res.json({
+      message: "success",
+      data: data,
+      id: this.lastID,
+    });
 
 
 
